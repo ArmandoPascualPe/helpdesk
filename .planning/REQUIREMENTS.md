@@ -95,14 +95,43 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 - AUTH-04 | Phase 1 | Pending |
-| TICK-01 - TICK-08 | Phase 1 | Pending |
-| COMM-01 - COMM-03 | Phase 1 | Pending |
-| ATT-01 - ATT-03 | Phase 1 | Pending |
-| SECH-01 - SECH-06 | Phase 1 | Pending |
-| HIST-01 - HIST-03 | Phase 1 | Pending |
-| DEPT-01 - DEPT-04 | Phase 2 | Pending |
-| DASH-01 - DASH-06 | Phase 2 | Pending |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| TICK-01 | Phase 1 | Pending |
+| TICK-02 | Phase 1 | Pending |
+| TICK-03 | Phase 1 | Pending |
+| TICK-04 | Phase 1 | Pending |
+| TICK-05 | Phase 1 | Pending |
+| TICK-06 | Phase 1 | Pending |
+| TICK-07 | Phase 1 | Pending |
+| TICK-08 | Phase 1 | Pending |
+| COMM-01 | Phase 2 | Pending |
+| COMM-02 | Phase 2 | Pending |
+| COMM-03 | Phase 2 | Pending |
+| ATT-01 | Phase 2 | Pending |
+| ATT-02 | Phase 2 | Pending |
+| ATT-03 | Phase 2 | Pending |
+| SECH-01 | Phase 2 | Pending |
+| SECH-02 | Phase 2 | Pending |
+| SECH-03 | Phase 2 | Pending |
+| SECH-04 | Phase 2 | Pending |
+| SECH-05 | Phase 2 | Pending |
+| SECH-06 | Phase 2 | Pending |
+| HIST-01 | Phase 2 | Pending |
+| HIST-02 | Phase 2 | Pending |
+| HIST-03 | Phase 2 | Pending |
+| DEPT-01 | Phase 3 | Pending |
+| DEPT-02 | Phase 3 | Pending |
+| DEPT-03 | Phase 3 | Pending |
+| DEPT-04 | Phase 3 | Pending |
+| DASH-01 | Phase 3 | Pending |
+| DASH-02 | Phase 3 | Pending |
+| DASH-03 | Phase 3 | Pending |
+| DASH-04 | Phase 3 | Pending |
+| DASH-05 | Phase 3 | Pending |
+| DASH-06 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 34 total
