@@ -1,0 +1,159 @@
+{
+  "collections": [
+    {
+      "name": "comentarios",
+      "type": "base",
+      "system": false,
+      "schema": [
+        {
+          "system": false,
+          "name": "ticket_id",
+          "type": "relation",
+          "required": true,
+          "unique": false,
+          "options": {
+            "collectionId": "tickets",
+            "cascadeDelete": true,
+            "minSelect": null,
+            "maxSelect": 1,
+            "displayFields": []
+          }
+        },
+        {
+          "system": false,
+          "name": "user_id",
+          "type": "relation",
+          "required": true,
+          "unique": false,
+          "options": {
+            "collectionId": "usuarios",
+            "cascadeDelete": false,
+            "minSelect": null,
+            "maxSelect": 1,
+            "displayFields": []
+          }
+        },
+        {
+          "system": false,
+          "name": "content",
+          "type": "text",
+          "required": true,
+          "unique": false,
+          "options": {
+            "min": null,
+            "max": null,
+            "patterns": []
+          }
+        },
+        {
+          "system": false,
+          "name": "is_internal",
+          "type": "bool",
+          "required": true,
+          "unique": false,
+          "options": {
+            "default": false
+          }
+        }
+      ],
+      "indexes": [],
+      "listRule": "",
+      "viewRule": "",
+      "createRule": "",
+      "updateRule": "",
+      "deleteRule": ""
+    },
+    {
+      "name": "historial",
+      "type": "base",
+      "system": false,
+      "schema": [
+        {
+          "system": false,
+          "name": "ticket_id",
+          "type": "relation",
+          "required": true,
+          "unique": false,
+          "options": {
+            "collectionId": "tickets",
+            "cascadeDelete": true,
+            "minSelect": null,
+            "maxSelect": 1,
+            "displayFields": []
+          }
+        },
+        {
+          "system": false,
+          "name": "user_id",
+          "type": "relation",
+          "required": true,
+          "unique": false,
+          "options": {
+            "collectionId": "usuarios",
+            "cascadeDelete": false,
+            "minSelect": null,
+            "maxSelect": 1,
+            "displayFields": []
+          }
+        },
+        {
+          "system": false,
+          "name": "change_type",
+          "type": "select",
+          "required": true,
+          "unique": false,
+          "options": {
+            "values": ["STATE_CHANGE", "ASSIGNMENT_CHANGE", "PRIORITY_CHANGE"]
+          }
+        },
+        {
+          "system": false,
+          "name": "old_value",
+          "type": "text",
+          "required": false,
+          "unique": false,
+          "options": {
+            "min": null,
+            "max": null,
+            "patterns": []
+          }
+        },
+        {
+          "system": false,
+          "name": "new_value",
+          "type": "text",
+          "required": false,
+          "unique": false,
+          "options": {
+            "min": null,
+            "max": null,
+            "patterns": []
+          }
+        }
+      ],
+      "indexes": [],
+      "listRule": "",
+      "viewRule": "",
+      "createRule": "",
+      "updateRule": "",
+      "deleteRule": ""
+    }
+  ],
+  "fields": {
+    "tickets": [
+      {
+        "system": false,
+        "name": "adjuntos",
+        "type": "file",
+        "required": false,
+        "unique": false,
+        "options": {
+          "maxCount": 3,
+          "maxSize": 5242880,
+          "mimeTypes": ["image/png", "image/jpeg", "application/pdf", "application/zip"],
+          "protected": false
+        }
+      }
+    ]
+  }
+}
