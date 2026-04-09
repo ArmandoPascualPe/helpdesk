@@ -2,7 +2,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Authentication & Tickets** - Sistema de autenticación y gestión básica de tickets
+- [x] **Phase 1: Authentication & Tickets** - Sistema de autenticación y gestión básica de tickets (completed 2026-04-09)
 - [x] **Phase 2: Features & History** - Comentarios, adjuntos, búsqueda y auditoría (completed 2026-04-09)
 - [ ] **Phase 3: Management & Supervision** - Departamentos y dashboard de métricas
 
