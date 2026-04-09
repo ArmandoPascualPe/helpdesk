@@ -44,7 +44,10 @@
   9. System records every ticket state change with timestamp and user who made it
   10. System records every assignment change with timestamp and user who made it
   11. System records every priority change with timestamp and user who made it
-**Plans**: TBD
+**Plans**: 3 plans
+- [ ] 02-01-PLAN.md — Comments and Attachments systems
+- [ ] 02-02-PLAN.md — Search & Filter with pagination
+- [ ] 02-03-PLAN.md — Audit History system
 
 ### Phase 3: Management & Supervision
 **Goal**: Supervisors can manage departments and view operational metrics
@@ -70,7 +73,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1 - Authentication & Tickets | 1/1 | ✅ Completed | 2026-04-09 |
-| 2 - Features & History | 0/1 | Not started | - |
+| 2 - Features & History | 3/3 | ✅ Planned | - |
 | 3 - Management & Supervision | 0/1 | Not started | - |
 
 ---
