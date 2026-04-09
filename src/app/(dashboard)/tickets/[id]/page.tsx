@@ -8,6 +8,7 @@ import { TicketCommentForm } from '@/components/ticket-comment-form';
 import { TicketCommentsList } from '@/components/ticket-comments-list';
 import { TicketAttachmentUpload } from '@/components/ticket-attachment-upload';
 import { TicketAttachmentsList } from '@/components/ticket-attachments-list';
+import { TicketHistoryList } from '@/components/ticket-history-list';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
 
@@ -47,6 +48,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [commentRefresh, setCommentRefresh] = useState(0);
   const [attachmentCount, setAttachmentCount] = useState(0);
+  const [historyRefresh, setHistoryRefresh] = useState(0);
 
   useEffect(() => {
     async function init() {
@@ -328,6 +330,12 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
             />
           </div>
           <TicketCommentsList ticketId={id} refreshTrigger={commentRefresh} />
+        </div>
+        
+        {/* History Section */}
+        <div className="border-t pt-4 mt-4">
+          <h2 className="font-semibold mb-3">Historial de Cambios</h2>
+          <TicketHistoryList ticketId={id} refreshTrigger={historyRefresh} />
         </div>
       </div>
     </div>
