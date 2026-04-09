@@ -25,24 +25,24 @@
 
 ### Comments
 
-- [ ] **COMM-01**: User can add public comments to a ticket
-- [ ] **COMM-02**: Agent/supervisor can add internal comments (not visible to clients)
-- [ ] **COMM-03**: Comments display in chronological order
+- [x] **COMM-01**: User can add public comments to a ticket
+- [x] **COMM-02**: Agent/supervisor can add internal comments (not visible to clients)
+- [x] **COMM-03**: Comments display in chronological order
 
 ### Attachments
 
-- [ ] **ATT-01**: User can attach up to 3 files per ticket
-- [ ] **ATT-02**: Files max 5MB each, types: png, jpeg, pdf, zip
-- [ ] **ATT-03**: User can download attachments
+- [x] **ATT-01**: User can attach up to 3 files per ticket
+- [x] **ATT-02**: Files max 5MB each, types: png, jpeg, pdf, zip
+- [x] **ATT-03**: User can download attachments
 
 ### Search & Filter
 
-- [ ] **SECH-01**: User can search tickets by text in title/description
-- [ ] **SECH-02**: User can filter by status
-- [ ] **SECH-03**: User can filter by priority
-- [ ] **SECH-04**: User can filter by category
-- [ ] **SECH-05**: User can filter by date range
-- [ ] **SECH-06**: Results are paginated (10 per page)
+- [x] **SECH-01**: User can search tickets by text in title/description
+- [x] **SECH-02**: User can filter by status
+- [x] **SECH-03**: User can filter by priority
+- [x] **SECH-04**: User can filter by category
+- [x] **SECH-05**: User can filter by date range
+- [x] **SECH-06**: Results are paginated (10 per page)
 
 ### Departments
 
@@ -62,9 +62,9 @@
 
 ### History
 
-- [ ] **HIST-01**: System records state changes with timestamp and user
-- [ ] **HIST-02**: System records assignment changes with timestamp and user
-- [ ] **HIST-03**: System records priority changes with timestamp and user
+- [x] **HIST-01**: System records state changes with timestamp and user
+- [x] **HIST-02**: System records assignment changes with timestamp and user
+- [x] **HIST-03**: System records priority changes with timestamp and user
 
 ## v2 Requirements
 
@@ -107,21 +107,21 @@
 | TICK-06 | Phase 1 | Pending |
 | TICK-07 | Phase 1 | Pending |
 | TICK-08 | Phase 1 | Pending |
-| COMM-01 | Phase 2 | Pending |
-| COMM-02 | Phase 2 | Pending |
-| COMM-03 | Phase 2 | Pending |
-| ATT-01 | Phase 2 | Pending |
-| ATT-02 | Phase 2 | Pending |
-| ATT-03 | Phase 2 | Pending |
-| SECH-01 | Phase 2 | Pending |
-| SECH-02 | Phase 2 | Pending |
-| SECH-03 | Phase 2 | Pending |
-| SECH-04 | Phase 2 | Pending |
-| SECH-05 | Phase 2 | Pending |
-| SECH-06 | Phase 2 | Pending |
-| HIST-01 | Phase 2 | Pending |
-| HIST-02 | Phase 2 | Pending |
-| HIST-03 | Phase 2 | Pending |
+| COMM-01 | Phase 2 | Complete |
+| COMM-02 | Phase 2 | Complete |
+| COMM-03 | Phase 2 | Complete |
+| ATT-01 | Phase 2 | Complete |
+| ATT-02 | Phase 2 | Complete |
+| ATT-03 | Phase 2 | Complete |
+| SECH-01 | Phase 2 | Complete |
+| SECH-02 | Phase 2 | Complete |
+| SECH-03 | Phase 2 | Complete |
+| SECH-04 | Phase 2 | Complete |
+| SECH-05 | Phase 2 | Complete |
+| SECH-06 | Phase 2 | Complete |
+| HIST-01 | Phase 2 | Complete |
+| HIST-02 | Phase 2 | Complete |
+| HIST-03 | Phase 2 | Complete |
 | DEPT-01 | Phase 3 | Pending |
 | DEPT-02 | Phase 3 | Pending |
 | DEPT-03 | Phase 3 | Pending |

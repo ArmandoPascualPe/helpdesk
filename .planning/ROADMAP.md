@@ -3,7 +3,7 @@
 ## Phases
 
 - [ ] **Phase 1: Authentication & Tickets** - Sistema de autenticación y gestión básica de tickets
-- [ ] **Phase 2: Features & History** - Comentarios, adjuntos, búsqueda y auditoría
+- [x] **Phase 2: Features & History** - Comentarios, adjuntos, búsqueda y auditoría (completed 2026-04-09)
 - [ ] **Phase 3: Management & Supervision** - Departamentos y dashboard de métricas
 
 ---
@@ -45,9 +45,9 @@
   10. System records every assignment change with timestamp and user who made it
   11. System records every priority change with timestamp and user who made it
 **Plans**: 3 plans
-- [ ] 02-01-PLAN.md — Comments and Attachments systems
-- [ ] 02-02-PLAN.md — Search & Filter with pagination
-- [ ] 02-03-PLAN.md — Audit History system
+- [x] 02-01-PLAN.md — Comments and Attachments systems
+- [x] 02-02-PLAN.md — Search & Filter with pagination
+- [x] 02-03-PLAN.md — Audit History system
 
 ### Phase 3: Management & Supervision
 **Goal**: Supervisors can manage departments and view operational metrics
@@ -73,7 +73,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1 - Authentication & Tickets | 1/1 | ✅ Completed | 2026-04-09 |
-| 2 - Features & History | 3/3 | ✅ Planned | - |
+| 2 - Features & History | 3/3 | Complete   | 2026-04-09 |
 | 3 - Management & Supervision | 0/1 | Not started | - |
 
 ---
