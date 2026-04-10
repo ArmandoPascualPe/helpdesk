@@ -64,7 +64,10 @@
   8. Supervisor can view agent workload (tickets assigned per agent)
   9. Supervisor can view average ticket resolution time
   10. Supervisor can view list of tickets open for more than 7 days
-**Plans**: TBD
+**Plans**: 3 plans
+- [x] 03-01-PLAN.md — Department Management (CRUD, validation, agent assignment)
+- [x] 03-02-PLAN.md — Dashboard & Metrics (charts, workload, overdue)
+- [x] 03-03-PLAN.md — Schema & Integration (resolved_at field, avg resolution time)
 
 ---
 
@@ -74,7 +77,7 @@
 |-------|----------------|--------|-----------|
 | 1 - Authentication & Tickets | 1/1 | ✅ Completed | 2026-04-09 |
 | 2 - Features & History | 3/3 | Complete   | 2026-04-09 |
-| 3 - Management & Supervision | 0/1 | Not started | - |
+| 3 - Management & Supervision | 3/3 | Planned    | - |
 
 ---
 
