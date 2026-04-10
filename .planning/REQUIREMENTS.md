@@ -7,21 +7,21 @@
 
 ### Authentication
 
-- [ ] **AUTH-01**: User can sign up with email and password
+- [x] **AUTH-01**: User can sign up with email and password
 - [ ] **AUTH-02**: User receives email verification after signup
 - [ ] **AUTH-03**: User can reset password via email link
-- [ ] **AUTH-04**: User session persists across browser refresh
+- [x] **AUTH-04**: User session persists across browser refresh
 
 ### Tickets
 
-- [ ] **TICK-01**: User can create a ticket with title, description, category, priority, department
-- [ ] **TICK-02**: Ticket is assigned a unique ticket_number (TKT-YYYY-NNNNN)
-- [ ] **TICK-03**: User can view list of their tickets
-- [ ] **TICK-04**: User can view detailed ticket information
-- [ ] **TICK-05**: Agent can take an unassigned ticket
-- [ ] **TICK-06**: Agent/supervisor can change ticket state (valid transitions only)
-- [ ] **TICK-07**: Agent/supervisor can reassign ticket to another agent
-- [ ] **TICK-08**: Agent/supervisor can change ticket priority
+- [x] **TICK-01**: User can create a ticket with title, description, category, priority, department
+- [x] **TICK-02**: Ticket is assigned a unique ticket_number (TKT-YYYY-NNNNN)
+- [x] **TICK-03**: User can view list of their tickets
+- [x] **TICK-04**: User can view detailed ticket information
+- [x] **TICK-05**: Agent can take an unassigned ticket
+- [x] **TICK-06**: Agent/supervisor can change ticket state (valid transitions only)
+- [x] **TICK-07**: Agent/supervisor can reassign ticket to another agent
+- [x] **TICK-08**: Agent/supervisor can change ticket priority
 
 ### Comments
 
@@ -95,30 +95,30 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Complete |
 | AUTH-02 | Phase 1 | Pending |
 | AUTH-03 | Phase 1 | Pending |
-| AUTH-04 | Phase 1 | Pending |
-| TICK-01 | Phase 1 | Pending |
-| TICK-02 | Phase 1 | Pending |
-| TICK-03 | Phase 1 | Pending |
-| TICK-04 | Phase 1 | Pending |
-| TICK-05 | Phase 1 | Pending |
-| TICK-06 | Phase 1 | Pending |
-| TICK-07 | Phase 1 | Pending |
-| TICK-08 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Complete |
+| TICK-01 | Phase 1 | Complete |
+| TICK-02 | Phase 1 | Complete |
+| TICK-03 | Phase 1 | Complete |
+| TICK-04 | Phase 1 | Complete |
+| TICK-05 | Phase 1 | Complete |
+| TICK-06 | Phase 1 | Complete |
+| TICK-07 | Phase 1 | Complete |
+| TICK-08 | Phase 1 | Complete |
 | COMM-01 | Phase 2 | Complete |
 | COMM-02 | Phase 2 | Complete |
 | COMM-03 | Phase 2 | Complete |
 | ATT-01 | Phase 2 | Complete |
 | ATT-02 | Phase 2 | Complete |
 | ATT-03 | Phase 2 | Complete |
-| SECH-01 | Phase 2 | Complete |
-| SECH-02 | Phase 2 | Complete |
-| SECH-03 | Phase 2 | Complete |
-| SECH-04 | Phase 2 | Complete |
-| SECH-05 | Phase 2 | Complete |
-| SECH-06 | Phase 2 | Complete |
+| SECH-01 | Phase 1 | Complete |
+| SECH-02 | Phase 1 | Complete |
+| SECH-03 | Phase 1 | Complete |
+| SECH-04 | Phase 1 | Complete |
+| SECH-05 | Phase 1 | Complete |
+| SECH-06 | Phase 1 | Complete |
 | HIST-01 | Phase 2 | Complete |
 | HIST-02 | Phase 2 | Complete |
 | HIST-03 | Phase 2 | Complete |
