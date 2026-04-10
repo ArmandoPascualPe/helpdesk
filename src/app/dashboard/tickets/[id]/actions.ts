@@ -4,6 +4,7 @@ import { pb } from '@/lib/pocketbase';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+import { recordHistory, ChangeType } from '@/lib/history';
 
 async function loadAuth() {
   'use server';
@@ -34,10 +35,22 @@ export async function takeTicket(ticketId: string) {
   }
   
   try {
+    const ticket = await pb.collection('tickets').getOne(ticketId);
+    const oldAssigned = ticket.asignado_a;
+    
     await pb.collection('tickets').update(ticketId, {
       asignado_a: user.id,
       estado: 'en_proceso',
     });
+    
+    if (oldAssigned !== user.id) {
+      await recordHistory({
+        ticket_id: ticketId,
+        change_type: 'ASSIGNMENT_CHANGE' as ChangeType,
+        old_value: oldAssigned || 'Sin asignar',
+        new_value: user.id,
+      }, user.id);
+    }
     
     revalidatePath('/tickets');
     revalidatePath(`/tickets/${ticketId}`);
@@ -77,12 +90,22 @@ export async function updateTicketStatus(ticketId: string, newStatus: string) {
       return { error: `Transición no permitida de ${ticket.estado} a ${newStatus}` };
     }
     
+    const oldStatus = ticket.estado;
     const updateData: any = { estado: newStatus };
     if (newStatus === 'cerrado') {
       updateData.cerrado_en = new Date().toISOString();
     }
     
     await pb.collection('tickets').update(ticketId, updateData);
+    
+    if (oldStatus !== newStatus) {
+      await recordHistory({
+        ticket_id: ticketId,
+        change_type: 'STATE_CHANGE' as ChangeType,
+        old_value: oldStatus,
+        new_value: newStatus,
+      }, user.id);
+    }
     
     revalidatePath('/tickets');
     revalidatePath(`/tickets/${ticketId}`);
@@ -106,9 +129,21 @@ export async function reassignTicket(ticketId: string, newAgentId: string) {
   }
   
   try {
+    const ticket = await pb.collection('tickets').getOne(ticketId);
+    const oldAssigned = ticket.asignado_a;
+    
     await pb.collection('tickets').update(ticketId, {
       asignado_a: newAgentId,
     });
+    
+    if (oldAssigned !== newAgentId) {
+      await recordHistory({
+        ticket_id: ticketId,
+        change_type: 'ASSIGNMENT_CHANGE' as ChangeType,
+        old_value: oldAssigned || 'Sin asignar',
+        new_value: newAgentId,
+      }, user.id);
+    }
     
     revalidatePath('/tickets');
     revalidatePath(`/tickets/${ticketId}`);
@@ -132,9 +167,21 @@ export async function updateTicketPriority(ticketId: string, newPriority: string
   }
   
   try {
+    const ticket = await pb.collection('tickets').getOne(ticketId);
+    const oldPriority = ticket.prioridad;
+    
     await pb.collection('tickets').update(ticketId, {
       prioridad: newPriority,
     });
+    
+    if (oldPriority !== newPriority) {
+      await recordHistory({
+        ticket_id: ticketId,
+        change_type: 'PRIORITY_CHANGE' as ChangeType,
+        old_value: oldPriority,
+        new_value: newPriority,
+      }, user.id);
+    }
     
     revalidatePath('/tickets');
     revalidatePath(`/tickets/${ticketId}`);

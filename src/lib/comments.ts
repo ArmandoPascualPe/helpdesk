@@ -27,10 +27,25 @@ export const commentSchema = z.object({
 
 export type CommentInput = z.infer<typeof commentSchema>;
 
+function initAuthFromCookie() {
+  if (typeof window === 'undefined') return;
+  const stored = localStorage.getItem("pb_auth");
+  if (stored) {
+    try {
+      const authData = JSON.parse(stored);
+      const pb = getPb();
+      pb.authStore.save(authData.token, authData.model);
+    } catch (e) {
+      console.error('Failed to load auth:', e);
+    }
+  }
+}
+
 export async function getCommentsByTicket(
   ticketId: string,
   includeInternal: boolean = false
 ): Promise<Comment[]> {
+  initAuthFromCookie();
   const pb = getPb();
   const user = currentUser();
   
@@ -54,6 +69,7 @@ export async function getCommentsByTicket(
 }
 
 export async function getAllCommentsByTicket(ticketId: string): Promise<Comment[]> {
+  initAuthFromCookie();
   const pb = getPb();
   
   const records = await pb.collection('comentarios').getList<Comment>(1, 100, {

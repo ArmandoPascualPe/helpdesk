@@ -11,19 +11,42 @@ interface TicketCommentsListProps {
 export function TicketCommentsList({ ticketId, userRole }: TicketCommentsListProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+    
     async function loadComments() {
-      const includeInternal = userRole === 'agente' || userRole === 'supervisor';
-      const data = await getCommentsByTicket(ticketId, includeInternal);
-      setComments(data);
-      setLoading(false);
+      try {
+        const includeInternal = userRole === 'agente' || userRole === 'supervisor';
+        const data = await getCommentsByTicket(ticketId, includeInternal);
+        if (isMounted) {
+          setComments(data);
+        }
+      } catch (e: any) {
+        if (isMounted && !e.message?.includes('aborted')) {
+          console.error('Error loading comments:', e);
+          setError('Error al cargar comentarios');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
     }
     loadComments();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [ticketId, userRole]);
 
   if (loading) {
     return <div className="text-gray-500">Cargando comentarios...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-sm">{error}</div>;
   }
 
   if (comments.length === 0) {

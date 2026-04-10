@@ -7,6 +7,7 @@ import { TicketCommentForm } from '@/components/ticket-comment-form';
 import { TicketCommentsList } from '@/components/ticket-comments-list';
 import { TicketAttachmentUpload } from '@/components/ticket-attachment-upload';
 import { TicketAttachmentsList } from '@/components/ticket-attachments-list';
+import { TicketHistoryList } from '@/components/ticket-history-list';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
 
@@ -41,58 +42,101 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [agents, setAgents] = useState<User[]>([]);
   const [actionLoading, setActionLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [assignedUserName, setAssignedUserName] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+    
     async function init() {
-      const stored = localStorage.getItem("pb_auth");
-      if (stored) {
-        try {
-          const data = JSON.parse(stored);
-          pb.authStore.save(data.token, data.model);
-          const userModel = data.model as User;
-          setUser(userModel);
-          
-          const ticketData = await pb.collection('tickets').getOne<Ticket>(id);
-          setTicket(ticketData);
-          
-          if (ticketData.asignado_a) {
-            try {
-              const assignedUser = await pb.collection('usuarios').getOne(ticketData.asignado_a);
-              const fullName = `${assignedUser.first_name || ''} ${assignedUser.last_name || ''}`.trim();
-              setAssignedUserName(fullName || assignedUser.email);
-            } catch (e) {
-              setAssignedUserName(ticketData.asignado_a);
-            }
+      try {
+        const stored = localStorage.getItem("pb_auth");
+        if (!stored) {
+          if (isMounted) setError('No hay sesión activa');
+          return;
+        }
+        
+        const data = JSON.parse(stored);
+        pb.authStore.save(data.token, data.model);
+        
+        if (!pb.authStore.isValid) {
+          if (isMounted) setError('Sesión inválida');
+          return;
+        }
+        
+        const userModel = data.model as User;
+        if (isMounted) setUser(userModel);
+        
+        const ticketData = await pb.collection('tickets').getOne<Ticket>(id);
+        if (isMounted) setTicket(ticketData);
+        
+        if (ticketData.asignado_a) {
+          try {
+            const assignedUser = await pb.collection('usuarios').getOne(ticketData.asignado_a);
+            const fullName = `${assignedUser.first_name || ''} ${assignedUser.last_name || ''}`.trim();
+            if (isMounted) setAssignedUserName(fullName || assignedUser.email);
+          } catch (e) {
+            if (isMounted) setAssignedUserName(ticketData.asignado_a);
           }
-          
-          if (userModel.rol === 'supervisor') {
-            const agentsList = await pb.collection('usuarios').getFullList<User>({
-              filter: `rol = "agente"`,
-            });
-            setAgents(agentsList);
-          }
-        } catch (e: any) {
-          console.error('Error loading ticket:', e.message);
+        }
+        
+        if (userModel.rol === 'supervisor') {
+          const agentsList = await pb.collection('usuarios').getFullList<User>({
+            filter: `rol = "agente"`,
+          });
+          if (isMounted) setAgents(agentsList);
+        }
+      } catch (e: any) {
+        console.error('Error loading ticket:', e);
+        if (isMounted && !e.message?.includes('aborted')) {
+          setError('Error al cargar el ticket: ' + (e.message || 'Error desconocido'));
         }
       }
-      setLoading(false);
+      if (isMounted) setLoading(false);
     }
     
     init();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [id]);
 
   const handleTakeTicket = async () => {
     setActionLoading(true);
     setMessage(null);
     try {
+      const oldAssigned = ticket?.asignado_a;
+      const oldStatus = ticket?.estado;
+      
       await pb.collection('tickets').update(id, {
         asignado_a: user?.id,
         estado: 'en_proceso',
       });
+      
+      if (oldStatus !== 'en_proceso') {
+        await pb.collection('historial_tickets').create({
+          ticket: id,
+          campo: 'estado',
+          valor_anterior: oldStatus || 'nuevo',
+          valor_nuevo: 'en_proceso',
+          modificado_por: user?.id,
+        });
+      }
+      
+      if (oldAssigned !== user?.id) {
+        await pb.collection('historial_tickets').create({
+          ticket: id,
+          campo: 'asignado_a',
+          valor_anterior: oldAssigned || 'Sin asignar',
+          valor_nuevo: user?.id,
+          modificado_por: user?.id,
+        });
+      }
+      
       const updated = await pb.collection('tickets').getOne<Ticket>(id);
       setTicket(updated);
       setMessage({ type: 'success', text: 'Ticket asignado correctamente' });
@@ -106,7 +150,25 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     setActionLoading(true);
     setMessage(null);
     try {
-      await pb.collection('tickets').update(id, { estado: newStatus });
+      const oldStatus = ticket?.estado;
+      
+      const updateData: any = { estado: newStatus };
+      if (newStatus === 'cerrado') {
+        updateData.cerrado_en = new Date().toISOString();
+      }
+      
+      await pb.collection('tickets').update(id, updateData);
+      
+      if (oldStatus !== newStatus) {
+        await pb.collection('historial_tickets').create({
+          ticket: id,
+          campo: 'estado',
+          valor_anterior: oldStatus,
+          valor_nuevo: newStatus,
+          modificado_por: user?.id,
+        });
+      }
+      
       const updated = await pb.collection('tickets').getOne<Ticket>(id);
       setTicket(updated);
       setMessage({ type: 'success', text: 'Estado actualizado' });
@@ -120,7 +182,20 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     setActionLoading(true);
     setMessage(null);
     try {
+      const oldAssigned = ticket?.asignado_a;
+      
       await pb.collection('tickets').update(id, { asignado_a: newAgentId });
+      
+      if (oldAssigned !== newAgentId) {
+        await pb.collection('historial_tickets').create({
+          ticket: id,
+          campo: 'asignado_a',
+          valor_anterior: oldAssigned || 'Sin asignar',
+          valor_nuevo: newAgentId,
+          modificado_por: user?.id,
+        });
+      }
+      
       const updated = await pb.collection('tickets').getOne<Ticket>(id);
       setTicket(updated);
       setMessage({ type: 'success', text: 'Ticket reasignado' });
@@ -134,7 +209,20 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     setActionLoading(true);
     setMessage(null);
     try {
+      const oldPriority = ticket?.prioridad;
+      
       await pb.collection('tickets').update(id, { prioridad: newPriority });
+      
+      if (oldPriority !== newPriority) {
+        await pb.collection('historial_tickets').create({
+          ticket: id,
+          campo: 'prioridad',
+          valor_anterior: oldPriority,
+          valor_nuevo: newPriority,
+          modificado_por: user?.id,
+        });
+      }
+      
       const updated = await pb.collection('tickets').getOne<Ticket>(id);
       setTicket(updated);
       setMessage({ type: 'success', text: 'Prioridad actualizada' });
@@ -174,6 +262,17 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
 
   if (loading) {
     return <div className="p-8">Cargando...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="text-red-500 mb-4">{error}</div>
+        <Link href="/dashboard/tickets" className="text-blue-600 hover:underline">
+          ← Volver a Mis Tickets
+        </Link>
+      </div>
+    );
   }
 
   if (!ticket) {
@@ -320,6 +419,10 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
             />
           </div>
         )}
+
+        <div className="border-t pt-4 mt-4">
+          <TicketHistoryList ticketId={id} />
+        </div>
       </div>
     </div>
   );
