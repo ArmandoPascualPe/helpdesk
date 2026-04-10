@@ -47,7 +47,7 @@ export default function RegisterPage() {
         email: data.email,
         password: data.password,
         passwordConfirm: data.confirmPassword,
-        nombre: data.nombre,
+        first_name: data.nombre,
         rol: 'cliente',
       });
 

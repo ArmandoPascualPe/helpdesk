@@ -3,6 +3,10 @@
 import { useState, useEffect, use } from 'react';
 import PocketBase from 'pocketbase';
 import Link from 'next/link';
+import { TicketCommentForm } from '@/components/ticket-comment-form';
+import { TicketCommentsList } from '@/components/ticket-comments-list';
+import { TicketAttachmentUpload } from '@/components/ticket-attachment-upload';
+import { TicketAttachmentsList } from '@/components/ticket-attachments-list';
 
 const pb = new PocketBase('http://127.0.0.1:8090');
 
@@ -18,6 +22,7 @@ interface Ticket {
   creado_por: string;
   asignado_a?: string;
   cerrado_en?: string;
+  archivos?: string[];
   created: string;
   updated: string;
 }
@@ -290,6 +295,31 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
           <h2 className="font-semibold mb-2">Descripción</h2>
           <p className="whitespace-pre-wrap">{ticket.descripcion}</p>
         </div>
+
+        {ticket.archivos && ticket.archivos.length > 0 && (
+          <div className="border-t pt-4 mt-4">
+            <TicketAttachmentsList ticketId={id} files={ticket.archivos} />
+          </div>
+        )}
+
+        <div className="border-t pt-4 mt-4">
+          <h2 className="font-semibold mb-4">Comentarios</h2>
+          <TicketCommentsList ticketId={id} userRole={user?.rol as any} />
+        </div>
+
+        <div className="border-t pt-4 mt-4">
+          <h2 className="font-semibold mb-4">Agregar Comentario</h2>
+          <TicketCommentForm ticketId={id} userRole={user?.rol as any} />
+        </div>
+
+        {isAgent && (
+          <div className="border-t pt-4 mt-4">
+            <TicketAttachmentUpload 
+              ticketId={id} 
+              currentFiles={ticket.archivos || []} 
+            />
+          </div>
+        )}
       </div>
     </div>
   );
