@@ -37,6 +37,9 @@ export async function register(email: string, password: string, nombre: string) 
 export function logout() {
   const pb = getPb();
   pb.authStore.clear();
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem("pb_auth");
+  }
 }
 
 export function currentUser(): User | null {

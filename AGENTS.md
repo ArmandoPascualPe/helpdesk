@@ -140,3 +140,9 @@ Do not make direct repo edits outside a GSD workflow unless the user explicitly 
 > Profile not yet configured. Run `/gsd-profile-user` to generate your developer profile.
 > This section is managed by `generate-claude-profile` -- do not edit manually.
 <!-- GSD:profile-end -->
+
+todas las ejecuciones de npn run dev solamente el usuario humano puede ejecutarlas, no las ejecutes automaticamente
+
+uno de los usuarios para probar el login es:
+usuario: armando.pascual@softtek.com
+y el pwd: Pa55word#26
