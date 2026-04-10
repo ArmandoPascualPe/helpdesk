@@ -16,6 +16,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Link href="/dashboard/tickets" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                   Mis Tickets
                 </Link>
+                <Link href="/dashboard/departments" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+                  Departamentos
+                </Link>
+                <Link href="/dashboard/supervisor" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+                  Dashboard
+                </Link>
               </div>
             </div>
             <div className="flex items-center">
