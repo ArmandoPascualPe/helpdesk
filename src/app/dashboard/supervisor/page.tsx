@@ -5,6 +5,7 @@ import { getPb } from '@/lib/pocketbase';
 import { DashboardCharts } from '@/components/dashboard-charts';
 import { AgentWorkload } from '@/components/agent-workload';
 import { OverdueTickets } from '@/components/overdue-tickets';
+import { AvgResolutionTime } from '@/components/avg-resolution-time';
 
 interface User {
   id: string;
@@ -35,15 +36,15 @@ export default function SupervisorDashboard() {
       
       const ticketsResult = await pb.collection('tickets').getFullList();
       
-      const closedTickets = ticketsResult.filter((t: any) => t.estado === 'cerrado' && t.created);
+      const closedTickets = ticketsResult.filter((t: any) => t.estado === 'cerrado' && t.cerrado_en);
       
       if (closedTickets.length > 0) {
-        const now = new Date();
         let totalDays = 0;
         
         closedTickets.forEach((ticket: any) => {
           const createdDate = new Date(ticket.created);
-          const days = (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
+          const resolvedDate = new Date(ticket.cerrado_en);
+          const days = (resolvedDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
           totalDays += days;
         });
         

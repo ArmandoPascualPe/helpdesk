@@ -94,6 +94,8 @@ export async function updateTicketStatus(ticketId: string, newStatus: string) {
     const updateData: any = { estado: newStatus };
     if (newStatus === 'cerrado') {
       updateData.cerrado_en = new Date().toISOString();
+    } else if (oldStatus === 'cerrado' && newStatus !== 'cerrado') {
+      updateData.cerrado_en = null;
     }
     
     await pb.collection('tickets').update(ticketId, updateData);

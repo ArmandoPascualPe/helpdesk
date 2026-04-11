@@ -30,6 +30,7 @@ interface Department {
 const STATUS_COLORS = {
   abierto: '#22C55E',
   en_proceso: '#F59E0B',
+  en_espera: '#F97316',
   cerrado: '#6B7280',
 };
 
@@ -63,6 +64,7 @@ export function DashboardCharts() {
       const statusCounts: Record<string, number> = {
         abierto: 0,
         en_proceso: 0,
+        en_espera: 0,
         cerrado: 0,
       };
       
@@ -88,6 +90,7 @@ export function DashboardCharts() {
       const byStatus = [
         { name: 'Abierto', value: statusCounts.abierto, color: STATUS_COLORS.abierto },
         { name: 'En Proceso', value: statusCounts.en_proceso, color: STATUS_COLORS.en_proceso },
+        { name: 'En Espera', value: statusCounts.en_espera, color: '#F97316' },
         { name: 'Cerrado', value: statusCounts.cerrado, color: STATUS_COLORS.cerrado },
       ];
       
