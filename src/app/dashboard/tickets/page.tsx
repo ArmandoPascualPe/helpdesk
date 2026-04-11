@@ -85,20 +85,23 @@ export default function TicketsPage() {
       const fetchData = async () => {
         let ticketList: Ticket[] = [];
         
-        if (userRol === "agente" && userDepto) {
-          const deptsRes = await fetch('http://127.0.0.1:8090/api/collections/departamentos/records');
-          const deptsData = await deptsRes.json();
-          const depts: Department[] = deptsData.items || [];
-          const dept = depts.find(d => d.nombre === userDepto);
+        if (userRol === "agente") {
+          let filters: string[] = [];
           
-          if (dept) {
-            const filter = `departamento='${dept.id}'`;
-            const res = await fetch(`http://127.0.0.1:8090/api/collections/tickets/records?filter=${encodeURIComponent(filter)}&sort=-created`, {
-              headers: { 'Authorization': token }
-            });
-            const data = await res.json();
-            ticketList = data.items || [];
+          if (userDepto) {
+            filters.push(`departamento='${userDepto}'`);
           }
+          
+          filters.push(`asignado_a='${userId}'`);
+          filters.push(`creado_por='${userId}'`);
+          
+          const filter = filters.map(f => `(${f})`).join(' || ');
+          
+          const res = await fetch(`http://127.0.0.1:8090/api/collections/tickets/records?filter=${encodeURIComponent(filter)}&sort=-created`, {
+            headers: { 'Authorization': token }
+          });
+          const data = await res.json();
+          ticketList = data.items || [];
         } else {
           let filter = "";
           if (userRol === "cliente") {
@@ -128,6 +131,14 @@ export default function TicketsPage() {
             usersMap[uid] = uid;
           }
         }
+        
+        const deptsRes = await fetch('http://127.0.0.1:8090/api/collections/departamentos/records');
+        const deptsData = await deptsRes.json();
+        const deptMap: Record<string, string> = {};
+        (deptsData.items || []).forEach((d: any) => {
+          deptMap[d.id] = d.nombre;
+        });
+        
         setAssignedUsers(usersMap);
         setAllTickets(ticketList);
         setLoading(false);

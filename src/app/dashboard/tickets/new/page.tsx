@@ -52,7 +52,7 @@ export default function NewTicketPage() {
       const user = pb.authStore.model;
       const year = new Date().getFullYear();
       
-      const countRes = await fetch(`http://127.0.0.1:8090/api/collections/tickets/records?filter=ticket_number~"TKT-${year}-"&page=1&perPage=1`);
+      const countRes = await fetch(`http://127.0.0.1:8090/api/collections/tickets/records?filter=ticket_number ~ "TKT-${year}-"&page=1&perPage=1`);
       const countData = await countRes.json();
       const nextNum = (countData.totalItems || 0) + 1;
       const ticketNumber = `TKT-${year}-${String(nextNum).padStart(5, '0')}`;
