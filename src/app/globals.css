@@ -1,17 +1,90 @@
 @import "tailwindcss";
 
+@theme {
+  --color-beige-light: #F5F0E8;
+  --color-beige-medium: #E8DFD0;
+  --color-beige-dark: #D4C4A8;
+  --color-olive-light: #8B9A6D;
+  --color-olive-medium: #6B7A4D;
+  --color-olive-dark: #4A5632;
+  --color-olive-deep: #2E3A20;
+  --color-text-primary: #2E3A20;
+  --color-text-secondary: #6B7A4D;
+  --color-text-muted: #8B9A6D;
+  --color-card-bg: #FDFCF9;
+  --color-input-bg: #FAFAF7;
+  
+  --color-wood-light: #5D4037;
+  --color-wood-medium: #4E342E;
+  --color-wood-dark: #3E2723;
+  --color-wood-deep: #2E1F1A;
+  --color-gold: #B8860B;
+  --color-gold-light: #DAA520;
+  --color-forest: #228B22;
+  --color-forest-dark: #1B5E20;
+  
+  --font-family-display: 'Playfair Display', Georgia, serif;
+  --font-family-hand: 'Caveat', cursive;
+  --font-family-body: system-ui, -apple-system, sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --beige-light: #F5F0E8;
+  --beige-medium: #E8DFD0;
+  --beige-dark: #D4C4A8;
+  --olive-light: #8B9A6D;
+  --olive-medium: #6B7A4D;
+  --olive-dark: #4A5632;
+  --olive-deep: #2E3A20;
+  --text-primary: #2E3A20;
+  --text-secondary: #6B7A4D;
+  --text-muted: #8B9A6D;
+  --card-bg: #FDFCF9;
+  --input-bg: #FAFAF7;
+  --wood-light: #5D4037;
+  --wood-medium: #4E342E;
+  --wood-dark: #3E2723;
+  --wood-deep: #2E1F1A;
+  --gold: #B8860B;
+  --gold-light: #DAA520;
+  --forest: #228B22;
+  --forest-dark: #1B5E20;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  background: var(--beige-light);
+  font-family: var(--font-family-body);
+  margin: 0;
+  padding: 0;
 }
 
-input, textarea, select {
-  color: #171717 !important;
-  background-color: #ffffff !important;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animation-delay-100 { animation-delay: 0.1s; }
+.animation-delay-200 { animation-delay: 0.2s; }
+.animation-delay-300 { animation-delay: 0.3s; }
+.animation-delay-400 { animation-delay: 0.4s; }
+.animation-delay-500 { animation-delay: 0.5s; }

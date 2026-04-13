@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getPb } from '@/lib/pocketbase';
+import PocketBase from 'pocketbase';
 import { DashboardCharts } from '@/components/dashboard-charts';
 import { AgentWorkload } from '@/components/agent-workload';
 import { OverdueTickets } from '@/components/overdue-tickets';
 import { AvgResolutionTime } from '@/components/avg-resolution-time';
+
+const pb = new PocketBase('http://127.0.0.1:8090');
 
 interface User {
   id: string;
@@ -28,7 +30,11 @@ export default function SupervisorDashboard() {
   async function loadUserAndMetrics() {
     setLoading(true);
     try {
-      const pb = getPb();
+      const stored = localStorage.getItem("pb_auth");
+      if (stored) {
+        const authData = JSON.parse(stored);
+        pb.authStore.save(authData.token, authData.model);
+      }
       
       if (pb.authStore.model) {
         setUser(pb.authStore.model as unknown as User);
@@ -58,19 +64,34 @@ export default function SupervisorDashboard() {
   }
 
   if (loading) {
-    return <div className="text-gray-500">Cargando dashboard...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="w-10 h-10 border-3 border-[var(--wood-medium)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p style={{ color: 'var(--wood-medium)', fontFamily: 'var(--font-cormorant)' }}>Cargando dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard del Supervisor</h1>
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600">Tickets abiertos hace más de:</label>
+    <div className="space-y-8">
+      <div className="flex justify-between items-end pb-6 border-b" style={{ borderColor: 'var(--beige-dark)' }}>
+        <div>
+          <h1 className="text-4xl font-semibold" style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--wood-dark)' }}>
+            Panel de Control
+          </h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-cormorant)' }}>
+            Vista general del Help Desk • {user?.first_name} {user?.last_name}
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>Tickets vencidos (más de):</span>
           <select
             value={thresholdDays}
             onChange={(e) => setThresholdDays(Number(e.target.value))}
-            className="border rounded px-2 py-1"
+            className="px-3 py-2 rounded-lg border text-sm"
+            style={{ borderColor: 'var(--beige-dark)', fontFamily: 'var(--font-cormorant)' }}
           >
             <option value={5}>5 días</option>
             <option value={7}>7 días</option>
@@ -80,28 +101,44 @@ export default function SupervisorDashboard() {
         </div>
       </div>
 
-      <DashboardCharts />
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AgentWorkload />
-        
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-lg font-medium mb-4">Tiempo Promedio de Resolución</h3>
+        <div className="rounded-2xl p-6 border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--beige-dark)', boxShadow: '0 4px 20px rgba(62, 39, 35, 0.08)' }}>
+          <h3 className="text-lg font-medium mb-1 text-center" style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--wood-dark)' }}>
+            Tiempo Promedio de Resolución
+          </h3>
           {avgResolutionDays !== null ? (
-            <div className="text-center">
-              <span className="text-4xl font-bold text-blue-600">{avgResolutionDays}</span>
-              <span className="text-lg text-gray-600"> días promedio</span>
-              <p className="text-sm text-gray-500 mt-2">
+            <div className="text-center py-6">
+              <span className="text-6xl font-bold" style={{ color: 'var(--gold)', fontFamily: 'var(--font-cormorant)' }}>{avgResolutionDays}</span>
+              <span className="text-2xl ml-2" style={{ color: 'var(--wood-medium)' }}>días</span>
+              <p className="text-sm mt-3" style={{ color: 'var(--text-muted)' }}>
                 Basado en {closedTicketsCount} tickets cerrados
               </p>
             </div>
           ) : (
-            <p className="text-gray-500">No hay suficientes datos</p>
+            <div className="text-center py-8" style={{ color: 'var(--text-muted)' }}>
+              No hay suficientes datos
+            </div>
           )}
+        </div>
+
+        <div className="rounded-2xl p-6 border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--beige-dark)', boxShadow: '0 4px 20px rgba(62, 39, 35, 0.08)' }}>
+          <h3 className="text-lg font-medium mb-1 text-center" style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--wood-dark)' }}>
+            Tickets Vencidos
+          </h3>
+          <OverdueTickets thresholdDays={thresholdDays} />
         </div>
       </div>
 
-      <OverdueTickets thresholdDays={thresholdDays} />
+      <div className="rounded-2xl p-6 border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--beige-dark)', boxShadow: '0 4px 20px rgba(62, 39, 35, 0.08)' }}>
+        <DashboardCharts />
+      </div>
+
+      <div className="rounded-2xl p-6 border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--beige-dark)', boxShadow: '0 4px 20px rgba(62, 39, 35, 0.08)' }}>
+        <h3 className="text-xl font-medium mb-6 text-center" style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--wood-dark)' }}>
+          Carga de Trabajo por Agente
+        </h3>
+        <AgentWorkload />
+      </div>
     </div>
   );
 }

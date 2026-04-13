@@ -14,6 +14,7 @@ export function TicketHistoryList({ ticketId }: TicketHistoryListProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [usersCache, setUsersCache] = useState<Record<string, string>>({});
 
   useEffect(() => {
     let isMounted = true;
@@ -53,6 +54,41 @@ export function TicketHistoryList({ ticketId }: TicketHistoryListProps) {
     };
   }, [ticketId]);
 
+  useEffect(() => {
+    async function loadUsersNames() {
+      const userIds = new Set<string>();
+      
+      history.forEach(entry => {
+        if (entry.valor_anterior && entry.campo === 'asignado_a' && entry.valor_anterior !== 'Sin asignar') {
+          userIds.add(entry.valor_anterior);
+        }
+        if (entry.valor_nuevo && entry.campo === 'asignado_a' && entry.valor_nuevo !== 'Sin asignar') {
+          userIds.add(entry.valor_nuevo);
+        }
+      });
+
+      if (userIds.size === 0) return;
+
+      const newCache: Record<string, string> = {};
+      
+      for (const userId of userIds) {
+        try {
+          const user = await pb.collection('usuarios').getOne(userId);
+          const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+          newCache[userId] = fullName || user.email;
+        } catch (e) {
+          newCache[userId] = userId;
+        }
+      }
+      
+      setUsersCache(newCache);
+    }
+
+    if (history.length > 0) {
+      loadUsersNames();
+    }
+  }, [history]);
+
   const getChangeTypeLabel = (campo: string): string => {
     switch (campo) {
       case 'estado':
@@ -66,8 +102,17 @@ export function TicketHistoryList({ ticketId }: TicketHistoryListProps) {
     }
   };
 
-  const formatValue = (value: string): string => {
+  const formatValue = (value: string, campo: string): string => {
     if (!value || value === 'Sin asignar') return value;
+    
+    if (campo === 'asignado_a' && usersCache[value]) {
+      return usersCache[value];
+    }
+    
+    if (campo === 'asignado_a' && /^([a-zA-Z0-9]{15,})$/.test(value)) {
+      return usersCache[value] || value;
+    }
+    
     return value;
   };
 
@@ -110,7 +155,10 @@ export function TicketHistoryList({ ticketId }: TicketHistoryListProps) {
             const userName = entry.expand?.modificado_por?.first_name
               ? `${entry.expand.modificado_por.first_name} ${entry.expand.modificado_por.last_name || ''}`.trim()
               : entry.expand?.modificado_por?.email || 'Usuario';
-              
+            
+            const prevValue = formatValue(entry.valor_anterior, entry.campo);
+            const newValue = formatValue(entry.valor_nuevo, entry.campo);
+                
             return (
               <div key={entry.id} className="border rounded-lg p-3 bg-gray-50">
                 <div className="flex justify-between items-start">
@@ -129,9 +177,9 @@ export function TicketHistoryList({ ticketId }: TicketHistoryListProps) {
                   </span>
                 </div>
                 <div className="mt-1 text-sm">
-                  <span className="text-gray-600">{formatValue(entry.valor_anterior)}</span>
+                  <span className="text-gray-600">{prevValue}</span>
                   <span className="mx-2">→</span>
-                  <span className="text-blue-600 font-medium">{formatValue(entry.valor_nuevo)}</span>
+                  <span className="text-blue-600 font-medium">{newValue}</span>
                 </div>
               </div>
             );

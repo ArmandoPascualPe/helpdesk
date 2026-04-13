@@ -111,6 +111,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     try {
       const oldAssigned = ticket?.asignado_a;
       const oldStatus = ticket?.estado;
+      const userName = user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email : 'Usuario';
       
       await pb.collection('tickets').update(id, {
         asignado_a: user?.id,
@@ -132,13 +133,14 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
           ticket: id,
           campo: 'asignado_a',
           valor_anterior: oldAssigned || 'Sin asignar',
-          valor_nuevo: user?.id,
+          valor_nuevo: userName,
           modificado_por: user?.id,
         });
       }
       
       const updated = await pb.collection('tickets').getOne<Ticket>(id);
       setTicket(updated);
+      setAssignedUserName(userName);
       setMessage({ type: 'success', text: 'Ticket asignado correctamente' });
     } catch (e: any) {
       setMessage({ type: 'error', text: e.message || 'Error al tomar ticket' });
@@ -184,20 +186,26 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     try {
       const oldAssigned = ticket?.asignado_a;
       
+      const newAgent = agents.find(a => a.id === newAgentId);
+      const newAgentName = newAgent ? `${newAgent.first_name || ''} ${newAgent.last_name || ''}`.trim() || newAgent.email : newAgentId;
+      
+      const oldAgentName = oldAssigned || 'Sin asignar';
+      
       await pb.collection('tickets').update(id, { asignado_a: newAgentId });
       
       if (oldAssigned !== newAgentId) {
         await pb.collection('historial_tickets').create({
           ticket: id,
           campo: 'asignado_a',
-          valor_anterior: oldAssigned || 'Sin asignar',
-          valor_nuevo: newAgentId,
+          valor_anterior: oldAgentName,
+          valor_nuevo: newAgentName,
           modificado_por: user?.id,
         });
       }
       
       const updated = await pb.collection('tickets').getOne<Ticket>(id);
       setTicket(updated);
+      setAssignedUserName(newAgentName !== newAgentId ? newAgentName : null);
       setMessage({ type: 'success', text: 'Ticket reasignado' });
     } catch (e: any) {
       setMessage({ type: 'error', text: e.message || 'Error al reasignar' });

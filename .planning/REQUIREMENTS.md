@@ -46,19 +46,19 @@
 
 ### Departments
 
-- [ ] **DEPT-01**: Supervisor can create departments
-- [ ] **DEPT-02**: Supervisor can edit departments
-- [ ] **DEPT-03**: Supervisor can deactivate departments (if no open tickets)
-- [ ] **DEPT-04**: Agents can be assigned to departments
+- [x] **DEPT-01**: Supervisor can create departments
+- [x] **DEPT-02**: Supervisor can edit departments
+- [x] **DEPT-03**: Supervisor can deactivate departments (if no open tickets)
+- [x] **DEPT-04**: Agents can be assigned to departments
 
 ### Dashboard
 
-- [ ] **DASH-01**: Supervisor can view tickets by status
-- [ ] **DASH-02**: Supervisor can view tickets by priority
-- [ ] **DASH-03**: Supervisor can view tickets by department
-- [ ] **DASH-04**: Supervisor can view agent workload
-- [ ] **DASH-05**: Supervisor can view average resolution time
-- [ ] **DASH-06**: Supervisor can view tickets open > 7 days
+- [x] **DASH-01**: Supervisor can view tickets by status
+- [x] **DASH-02**: Supervisor can view tickets by priority
+- [x] **DASH-03**: Supervisor can view tickets by department
+- [x] **DASH-04**: Supervisor can view agent workload
+- [x] **DASH-05**: Supervisor can view average resolution time
+- [x] **DASH-06**: Supervisor can view tickets open > 7 days
 
 ### History
 
@@ -122,16 +122,16 @@
 | HIST-01 | Phase 2 | Complete |
 | HIST-02 | Phase 2 | Complete |
 | HIST-03 | Phase 2 | Complete |
-| DEPT-01 | Phase 3 | Pending |
-| DEPT-02 | Phase 3 | Pending |
-| DEPT-03 | Phase 3 | Pending |
-| DEPT-04 | Phase 3 | Pending |
-| DASH-01 | Phase 3 | Pending |
-| DASH-02 | Phase 3 | Pending |
-| DASH-03 | Phase 3 | Pending |
-| DASH-04 | Phase 3 | Pending |
-| DASH-05 | Phase 3 | Pending |
-| DASH-06 | Phase 3 | Pending |
+| DEPT-01 | Phase 3 | Complete |
+| DEPT-02 | Phase 3 | Complete |
+| DEPT-03 | Phase 3 | Complete |
+| DEPT-04 | Phase 3 | Complete |
+| DASH-01 | Phase 3 | Complete |
+| DASH-02 | Phase 3 | Complete |
+| DASH-03 | Phase 3 | Complete |
+| DASH-04 | Phase 3 | Complete |
+| DASH-05 | Phase 3 | Complete |
+| DASH-06 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 34 total

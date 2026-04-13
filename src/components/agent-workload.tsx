@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getPb } from '@/lib/pocketbase';
+import PocketBase from 'pocketbase';
+
+const pb = new PocketBase('http://127.0.0.1:8090');
 
 interface Agent {
   id: string;
@@ -34,7 +36,11 @@ export function AgentWorkload() {
   async function loadWorkloads() {
     setLoading(true);
     try {
-      const pb = getPb();
+      const stored = localStorage.getItem("pb_auth");
+      if (stored) {
+        const authData = JSON.parse(stored);
+        pb.authStore.save(authData.token, authData.model);
+      }
       
       const agentsResult = await pb.collection('usuarios').getFullList<Agent>({
         filter: 'rol = "agente"',
@@ -76,51 +82,64 @@ export function AgentWorkload() {
   }
 
   if (loading) {
-    return <div className="text-gray-500">Cargando workload...</div>;
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="w-6 h-6 border-2 border-[var(--wood-medium)] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <h3 className="text-lg font-medium mb-4">Carga de Trabajo de Agentes</h3>
-      
-      {workloads.length === 0 ? (
-        <p className="text-gray-500">No hay agentes registrados</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Agente</th>
-                <th className="px-4 py-2 text-center text-xs font-medium text-gray-500">Abiertos</th>
-                <th className="px-4 py-2 text-center text-xs font-medium text-gray-500">Resueltos</th>
-                <th className="px-4 py-2 text-center text-xs font-medium text-gray-500">Total</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {workloads.map((wl) => (
-                <tr key={wl.agent.id}>
-                  <td className="px-4 py-2">
-                    {wl.agent.first_name} {wl.agent.last_name}
-                  </td>
-                  <td className="px-4 py-2 text-center">
-                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">
-                      {wl.openTickets}
+    <div className="overflow-x-auto">
+      <table className="min-w-full">
+        <thead>
+          <tr className="rounded-lg" style={{ backgroundColor: 'var(--beige-medium)' }}>
+            <th className="px-4 py-3 text-left text-xs uppercase tracking-widest rounded-l-lg" style={{ color: 'var(--wood-dark)', fontFamily: 'var(--font-cormorant)' }}>Agente</th>
+            <th className="px-4 py-3 text-center text-xs uppercase tracking-widest" style={{ color: 'var(--wood-dark)', fontFamily: 'var(--font-cormorant)' }}>Abiertos</th>
+            <th className="px-4 py-3 text-center text-xs uppercase tracking-widest" style={{ color: 'var(--wood-dark)', fontFamily: 'var(--font-cormorant)' }}>Resueltos</th>
+            <th className="px-4 py-3 text-center text-xs uppercase tracking-widest rounded-r-lg" style={{ color: 'var(--wood-dark)', fontFamily: 'var(--font-cormorant)' }}>Total</th>
+          </tr>
+        </thead>
+        <tbody style={{ backgroundColor: 'var(--card-bg)' }}>
+          {workloads.length === 0 ? (
+            <tr>
+              <td colSpan={4} className="px-4 py-8 text-center" style={{ color: 'var(--text-muted)' }}>
+                No hay agentes registrados
+              </td>
+            </tr>
+          ) : (
+            workloads.map((wl, idx) => (
+              <tr key={wl.agent.id} className="border-t transition-all duration-300 hover:bg-[var(--beige-light)]" style={{ borderColor: 'var(--beige-dark)' }}>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium" style={{ backgroundColor: 'var(--wood-medium)', color: 'var(--beige-light)' }}>
+                      {wl.agent.first_name?.[0] || '?'}{wl.agent.last_name?.[0] || ''}
+                    </div>
+                    <span className="font-medium" style={{ color: 'var(--wood-dark)', fontFamily: 'var(--font-cormorant)' }}>
+                      {wl.agent.first_name} {wl.agent.last_name}
                     </span>
-                  </td>
-                  <td className="px-4 py-2 text-center">
-                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
-                      {wl.resolvedTickets}
-                    </span>
-                  </td>
-                  <td className="px-4 py-2 text-center font-medium">
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: '#FFF3E0', color: '#E65100' }}>
+                    {wl.openTickets}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: '#E8F5E9', color: '#2E7D32' }}>
+                    {wl.resolvedTickets}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <span className="text-lg font-semibold" style={{ color: 'var(--gold)', fontFamily: 'var(--font-cormorant)' }}>
                     {wl.totalLoad}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                  </span>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -29,38 +29,36 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--beige-light)' }}>
+      <nav className="shadow-lg" style={{ backgroundColor: 'var(--wood-dark)', boxShadow: '0 4px 20px rgba(46, 39, 35, 0.2)' }}>
+        <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between h-16">
-            <div className="flex flex-col items-start">
-              <Link href="/dashboard/tickets" className="text-xl font-bold text-blue-600">
+            <div className="flex flex-col items-start justify-center">
+              <Link href="/dashboard/tickets" className="text-2xl font-semibold transition-all duration-300 hover:text-[var(--gold-light)]" style={{ fontFamily: "var(--font-cormorant)", color: 'var(--beige-light)' }}>
                 Help Desk
               </Link>
               {userName && (
-                <span className="text-sm text-gray-500">{userName} ({userRole})</span>
+                <span className="text-sm mt-0.5 opacity-80" style={{ color: 'var(--beige-medium)' }}>{userName} • {userRole}</span>
               )}
-              <div className="ml-10 flex items-baseline space-x-4 mt-1">
-                <Link href="/dashboard/tickets" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
-                  Mis Tickets
-                </Link>
-                <Link href="/dashboard/departments" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
-                  Departamentos
-                </Link>
-                <Link href="/dashboard/supervisor" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
-                  Dashboard
-                </Link>
-              </div>
             </div>
-            <div className="flex items-center">
-              <Link href="/logout" className="text-sm text-red-600 hover:text-red-800">
+            <div className="flex items-center gap-1">
+              <Link href="/dashboard/tickets" className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-white/10" style={{ color: 'var(--beige-light)' }}>
+                Mis Tickets
+              </Link>
+              <Link href="/dashboard/departments" className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-white/10" style={{ color: 'var(--beige-light)' }}>
+                Departamentos
+              </Link>
+              <Link href="/dashboard/supervisor" className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-white/10" style={{ color: 'var(--beige-light)' }}>
+                Dashboard
+              </Link>
+              <Link href="/logout" className="ml-4 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-red-900/30" style={{ color: '#EF9A9A' }}>
                 Cerrar Sesión
               </Link>
             </div>
           </div>
         </div>
       </nav>
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-8 px-6">
         {children}
       </main>
     </div>

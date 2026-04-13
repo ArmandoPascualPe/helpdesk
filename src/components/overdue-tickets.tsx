@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getPb } from '@/lib/pocketbase';
+import PocketBase from 'pocketbase';
+
+const pb = new PocketBase('http://127.0.0.1:8090');
 
 interface Ticket {
   id: string;
@@ -33,7 +35,11 @@ export function OverdueTickets({ thresholdDays = 7 }: OverdueTicketsProps) {
   async function loadOverdueTickets() {
     setLoading(true);
     try {
-      const pb = getPb();
+      const stored = localStorage.getItem("pb_auth");
+      if (stored) {
+        const authData = JSON.parse(stored);
+        pb.authStore.save(authData.token, authData.model);
+      }
       
       const thresholdDate = new Date();
       thresholdDate.setDate(thresholdDate.getDate() - thresholdDays);
@@ -68,63 +74,72 @@ export function OverdueTickets({ thresholdDays = 7 }: OverdueTicketsProps) {
   }
 
   if (loading) {
-    return <div className="text-gray-500">Cargando tickets vencidos...</div>;
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="w-6 h-6 border-2 border-[var(--wood-medium)] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   const getPriorityColor = (prioridad: string) => {
     switch (prioridad) {
-      case 'critica': return 'bg-red-100 text-red-800 border-red-300';
-      case 'alta': return 'bg-orange-100 text-orange-800 border-orange-300';
-      case 'media': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'baja': return 'bg-green-100 text-green-800 border-green-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'critica': return { bg: '#FFEBEE', color: '#C62828', border: '#EF5350' };
+      case 'alta': return { bg: '#FFF3E0', color: '#E65100', border: '#FF9800' };
+      case 'media': return { bg: '#FFFDE7', color: '#F9A825', border: '#FDD835' };
+      case 'baja': return { bg: '#E8F5E9', color: '#2E7D32', border: '#66BB6A' };
+      default: return { bg: '#ECEFF1', color: '#546E7A', border: '#90A4AE' };
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <h3 className="text-lg font-medium mb-4">
-        Tickets Abiertos Más de {thresholdDays} Días
-      </h3>
-      
+    <div>
       {tickets.length === 0 ? (
-        <p className="text-gray-500">No hay tickets vencidos</p>
+        <div className="text-center py-8" style={{ color: 'var(--text-muted)' }}>
+          No hay tickets vencidos
+        </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Ticket</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Título</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Departamento</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Prioridad</th>
-                <th className="px-4 py-2 text-center text-xs font-medium text-gray-500">Días</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {tickets.map((ticket) => (
-                <tr key={ticket.id} className="bg-red-50 border-l-4 border-red-400">
-                  <td className="px-4 py-2 text-sm font-medium">
-                    {ticket.ticket_number}
-                  </td>
-                  <td className="px-4 py-2 text-sm">
-                    {ticket.titulo}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-500">
-                    {ticket.departmentName}
-                  </td>
-                  <td className="px-4 py-2">
-                    <span className={`px-2 py-1 rounded text-xs ${getPriorityColor(ticket.prioridad)}`}>
+        <div className="space-y-2">
+          {tickets.map((ticket) => {
+            const colors = getPriorityColor(ticket.prioridad);
+            return (
+              <div 
+                key={ticket.id} 
+                className="flex items-center justify-between p-3 rounded-lg border-l-4 transition-all duration-300 hover:shadow-md"
+                style={{ 
+                  backgroundColor: 'var(--card-bg)', 
+                  borderLeftColor: colors.border,
+                  boxShadow: '0 2px 8px rgba(62, 39, 35, 0.06)'
+                }}
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium shrink-0" style={{ color: 'var(--wood-medium)', fontFamily: 'var(--font-cormorant)' }}>
+                      {ticket.ticket_number}
+                    </span>
+                    <span className="text-sm truncate" style={{ color: 'var(--text-primary)' }}>
+                      {ticket.titulo}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{ticket.departmentName}</span>
+                    <span className="text-xs" style={{ color: 'var(--beige-dark)' }}>•</span>
+                    <span 
+                      className="px-2 py-0.5 rounded text-xs font-medium"
+                      style={{ backgroundColor: colors.bg, color: colors.color }}
+                    >
                       {ticket.prioridad}
                     </span>
-                  </td>
-                  <td className="px-4 py-2 text-center font-medium text-red-600">
+                  </div>
+                </div>
+                <div className="text-right ml-4">
+                  <span className="text-2xl font-bold" style={{ color: 'var(--gold)', fontFamily: 'var(--font-cormorant)' }}>
                     {ticket.daysOpen}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>
+                  <span className="text-xs block" style={{ color: 'var(--text-muted)' }}>días</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
