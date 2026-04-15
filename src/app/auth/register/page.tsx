@@ -8,6 +8,7 @@ import { z } from "zod";
 import { pb } from "@/lib/pocketbase";
 
 const registerSchema = z.object({
+  username: z.string().min(3, "Username debe tener al menos 3 caracteres").regex(/^[a-zA-Z0-9_]+$/, "Solo letras, números y guiones bajos"),
   nombre: z.string().min(2, "Nombre debe tener al menos 2 caracteres"),
   email: z.string().email("Email inválido"),
   password: z
@@ -44,6 +45,7 @@ export default function RegisterPage() {
 
     try {
       await pb.collection('usuarios').create({
+        username: data.username,
         email: data.email,
         password: data.password,
         passwordConfirm: data.confirmPassword,
@@ -51,9 +53,12 @@ export default function RegisterPage() {
         rol: 'cliente',
       });
 
-      const authData = await pb.collection('usuarios').authWithPassword(data.email, data.password);
-      document.cookie = `pb_auth=${encodeURIComponent(JSON.stringify(authData))}; path=/; max-age=604800`;
-      router.push("/auth/login");
+      // Send verification email
+      await pb.collection('usuarios').requestVerification(data.email);
+
+      // Logout and redirect to login
+      pb.authStore.clear();
+      router.push("/auth/login?verified=true");
     } catch (err: any) {
       setError(err.message || "Error al registrar");
     } finally {
@@ -88,6 +93,19 @@ export default function RegisterPage() {
               />
               {errors.nombre && (
                 <p className="text-red-500 text-xs mt-1">{errors.nombre.message}</p>
+              )}
+            </div>
+            
+            <div>
+              <input
+                {...register("username")}
+                type="text"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500"
+                placeholder="Username"
+              />
+              {errors.username && (
+                <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>
               )}
             </div>
             

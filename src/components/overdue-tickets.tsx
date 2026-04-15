@@ -22,18 +22,28 @@ interface Department {
 
 interface OverdueTicketsProps {
   thresholdDays?: number;
+  userRole?: string;
 }
 
-export function OverdueTickets({ thresholdDays = 7 }: OverdueTicketsProps) {
+export function OverdueTickets({ thresholdDays = 7, userRole }: OverdueTicketsProps) {
   const [tickets, setTickets] = useState<(Ticket & { departmentName: string; daysOpen: number })[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (userRole === undefined) return;
+    if (userRole && userRole !== 'supervisor') {
+      setError('Solo supervisores pueden ver esta sección');
+      setLoading(false);
+      return;
+    }
     loadOverdueTickets();
-  }, [thresholdDays]);
+  }, [thresholdDays, userRole]);
 
   async function loadOverdueTickets() {
+    if (!userRole || userRole !== 'supervisor') return;
     setLoading(true);
+    setError(null);
     try {
       const stored = localStorage.getItem("pb_auth");
       if (stored) {
@@ -77,6 +87,14 @@ export function OverdueTickets({ thresholdDays = 7 }: OverdueTicketsProps) {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="w-6 h-6 border-2 border-[var(--wood-medium)] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8" style={{ color: 'var(--text-muted)' }}>
+        {error}
       </div>
     );
   }

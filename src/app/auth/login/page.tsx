@@ -95,6 +95,12 @@ export default function LoginPage() {
               />
             </div>
 
+            <div className="text-right">
+              <a href="/auth/reset-password" className="text-xs text-[var(--text-muted)] hover:text-[var(--olive-medium)] transition-colors">
+                ¿Olvidaste tu contraseña?
+              </a>
+            </div>
+
             <button
               type="submit"
               disabled={loading}

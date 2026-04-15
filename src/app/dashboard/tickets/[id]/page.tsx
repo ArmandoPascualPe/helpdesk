@@ -52,6 +52,9 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     let isMounted = true;
     
     async function init() {
+      // Small delay to avoid race conditions with React Strict Mode
+      await new Promise(resolve => setTimeout(resolve, 0));
+      
       try {
         const stored = localStorage.getItem("pb_auth");
         if (!stored) {
@@ -60,26 +63,30 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
         }
         
         const data = JSON.parse(stored);
-        pb.authStore.save(data.token, data.model);
-        
-        if (!pb.authStore.isValid) {
-          if (isMounted) setError('Sesión inválida');
+        if (!data.token) {
+          if (isMounted) setError('Token no encontrado');
           return;
         }
         
+        pb.authStore.save(data.token, data.model);
+        
         const userModel = data.model as User;
-        if (isMounted) setUser(userModel);
+        if (!isMounted) return;
+        setUser(userModel);
         
         const ticketData = await pb.collection('tickets').getOne<Ticket>(id);
-        if (isMounted) setTicket(ticketData);
+        if (!isMounted) return;
+        setTicket(ticketData);
         
         if (ticketData.asignado_a) {
           try {
             const assignedUser = await pb.collection('usuarios').getOne(ticketData.asignado_a);
+            if (!isMounted) return;
             const fullName = `${assignedUser.first_name || ''} ${assignedUser.last_name || ''}`.trim();
-            if (isMounted) setAssignedUserName(fullName || assignedUser.email);
+            setAssignedUserName(fullName || assignedUser.email);
           } catch (e) {
-            if (isMounted) setAssignedUserName(ticketData.asignado_a);
+            if (!isMounted) return;
+            setAssignedUserName(ticketData.asignado_a);
           }
         }
         
@@ -87,15 +94,19 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
           const agentsList = await pb.collection('usuarios').getFullList<User>({
             filter: `rol = "agente"`,
           });
-          if (isMounted) setAgents(agentsList);
+          if (!isMounted) return;
+          setAgents(agentsList);
         }
       } catch (e: any) {
-        console.error('Error loading ticket:', e);
-        if (isMounted && !e.message?.includes('aborted')) {
-          setError('Error al cargar el ticket: ' + (e.message || 'Error desconocido'));
+        if (!isMounted) return;
+        const errorMsg = e.message || '';
+        if (!errorMsg.includes('aborted')) {
+          console.error('Error loading ticket:', e);
+          setError('Error al cargar el ticket: ' + errorMsg);
         }
       }
-      if (isMounted) setLoading(false);
+      if (!isMounted) return;
+      setLoading(false);
     }
     
     init();

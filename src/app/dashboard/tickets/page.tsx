@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
+import { ResolvedTicketsAlert } from "@/components/resolved-tickets-alert";
 
 interface Ticket {
   id: string;
@@ -41,12 +42,13 @@ export default function TicketsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+const [tickets, setTickets] = useState<Ticket[]>([]);
   const [allTickets, setAllTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [assignedUsers, setAssignedUsers] = useState<Record<string, string>>({});
   const [showFilters, setShowFilters] = useState(false);
+  const [userRol, setUserRol] = useState("");
   
   const [filters, setFilters] = useState<Filters>({
     search: searchParams.get("search") || "",
@@ -75,6 +77,7 @@ export default function TicketsPage() {
       const userId = user?.id;
       const userRol = user?.rol;
       const userDepto = user?.departamento;
+      setUserRol(userRol || "");
       
       if (!token || !userId) {
         setError("Token inválido");
@@ -265,34 +268,24 @@ export default function TicketsPage() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-semibold text-[var(--olive-deep)]" style={{ fontFamily: "var(--font-cormorant)" }}>
-            Mis Tickets
-          </h1>
-          <p className="text-sm text-[var(--text-muted)] mt-1">Gestiona y sigue tus solicitudes de soporte</p>
-        </div>
-        <Link href="/dashboard/tickets/new" className="px-5 py-2.5 rounded-xl font-medium transition-all duration-300 hover:shadow-lg bg-[var(--olive-dark)] text-[var(--beige-light)] hover:bg-[var(--olive-deep)]">
-          Nuevo Ticket
+    <div className="min-h-screen p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-semibold" style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--olive-deep)' }}>
+          Mis Tickets
+        </h1>
+        <Link
+          href="/dashboard/tickets/new"
+          className="px-5 py-2.5 rounded-xl font-medium transition-all duration-300 hover:shadow-lg bg-[var(--olive-dark)] text-[var(--beige-light)] hover:bg-[var(--olive-deep)]"
+        >
+          + Nuevo Ticket
         </Link>
       </div>
-
-      <div className="mb-6">
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2 px-4 py-2.5 border rounded-xl transition-all duration-300 hover:border-[var(--olive-medium)]"
-          style={{ borderColor: 'rgba(212, 196, 168, 0.5)', color: 'var(--text-secondary)' }}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-          </svg>
-          <span className="text-sm">Filtros</span>
-          {hasActiveFilters() && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--olive-medium)] text-[var(--beige-light)]">Activos</span>
-          )}
-        </button>
-      </div>
+      <ResolvedTicketsAlert userRole={userRol} />
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          {error}
+        </div>
+      )}
 
       {showFilters && (
         <div className="rounded-2xl p-6 mb-6 border" style={{ backgroundColor: 'rgba(253, 252, 249, 0.8)', borderColor: 'rgba(212, 196, 168, 0.3)' }}>
@@ -412,7 +405,7 @@ export default function TicketsPage() {
                   <th className="px-6 py-4 text-left text-sm uppercase tracking-widest rounded-tr-lg" style={{ color: 'var(--olive-deep)', fontFamily: 'var(--font-cormorant)' }}>Fecha</th>
                 </tr>
               </thead>
-              <tbody style={{ backgroundColor: 'var(--card-bg)' }}>
+              <tbody style={{ backgroundColor: '#FAF8F3' }}>
                 {tickets.map((ticket) => (
                   <tr key={ticket.id} className="border-t transition-all duration-300 hover:bg-[var(--beige-light)]" style={{ borderColor: 'rgba(212, 196, 168, 0.2)' }}>
                     <td className="px-6 py-4">

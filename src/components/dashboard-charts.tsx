@@ -16,6 +16,10 @@ interface Department {
   nombre: string;
 }
 
+interface DashboardChartsProps {
+  userRole?: string;
+}
+
 const STATUS_COLORS = {
   nuevo: '#2E7D32',
   en_proceso: '#F57C00',
@@ -34,15 +38,23 @@ const STATUS_LABELS: Record<string, string> = {
   cerrado: 'Cerrado',
 };
 
-export function DashboardCharts() {
+export function DashboardCharts({ userRole }: DashboardChartsProps) {
   const [stats, setStats] = useState<TicketStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (userRole === undefined) return;
+    if (userRole && userRole !== 'supervisor') {
+      setError('Solo supervisores pueden ver esta sección');
+      setLoading(false);
+      return;
+    }
     loadStats();
-  }, []);
+  }, [userRole]);
 
   async function loadStats() {
+    if (!userRole || userRole !== 'supervisor') return;
     setLoading(true);
     try {
       const stored = localStorage.getItem("pb_auth");
@@ -109,6 +121,14 @@ export function DashboardCharts() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="w-8 h-8 border-2 border-[var(--wood-medium)] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12" style={{ color: 'var(--text-muted)' }}>
+        {error}
       </div>
     );
   }

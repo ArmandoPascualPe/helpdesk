@@ -25,15 +25,27 @@ interface AgentWorkload {
   totalLoad: number;
 }
 
-export function AgentWorkload() {
+interface AgentWorkloadProps {
+  userRole?: string;
+}
+
+export function AgentWorkload({ userRole }: AgentWorkloadProps) {
   const [workloads, setWorkloads] = useState<AgentWorkload[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (userRole === undefined) return;
+    if (userRole && userRole !== 'supervisor') {
+      setError('Solo supervisores pueden ver esta sección');
+      setLoading(false);
+      return;
+    }
     loadWorkloads();
-  }, []);
+  }, [userRole]);
 
   async function loadWorkloads() {
+    if (!userRole || userRole !== 'supervisor') return;
     setLoading(true);
     try {
       const stored = localStorage.getItem("pb_auth");
@@ -89,6 +101,14 @@ export function AgentWorkload() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="text-center py-8" style={{ color: 'var(--text-muted)' }}>
+        {error}
+      </div>
+    );
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full">
@@ -100,7 +120,7 @@ export function AgentWorkload() {
             <th className="px-4 py-3 text-center text-xs uppercase tracking-widest rounded-r-lg" style={{ color: 'var(--wood-dark)', fontFamily: 'var(--font-cormorant)' }}>Total</th>
           </tr>
         </thead>
-        <tbody style={{ backgroundColor: 'var(--card-bg)' }}>
+        <tbody style={{ backgroundColor: '#FAF8F3' }}>
           {workloads.length === 0 ? (
             <tr>
               <td colSpan={4} className="px-4 py-8 text-center" style={{ color: 'var(--text-muted)' }}>

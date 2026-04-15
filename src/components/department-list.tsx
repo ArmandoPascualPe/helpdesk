@@ -384,7 +384,7 @@ export function DepartmentList({ userRole }: { userRole: UserRole['rol'] }) {
                 <th className="px-4 py-3 text-left text-xs uppercase tracking-widest rounded-r-lg" style={{ color: 'var(--olive-deep)', fontFamily: 'var(--font-cormorant)' }}>Acción</th>
               </tr>
             </thead>
-            <tbody style={{ backgroundColor: 'var(--card-bg)' }}>
+<tbody style={{ backgroundColor: '#FAF8F3' }}>
               {agentsInDept.length === 0 ? (
                 <tr>
                   <td colSpan={3} className="px-4 py-4 text-center text-sm" style={{ color: 'var(--text-muted)' }}>

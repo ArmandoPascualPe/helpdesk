@@ -22,10 +22,52 @@ export default function SupervisorDashboard() {
   const [thresholdDays, setThresholdDays] = useState(7);
   const [avgResolutionDays, setAvgResolutionDays] = useState<number | null>(null);
   const [closedTicketsCount, setClosedTicketsCount] = useState(0);
+  const [autoCloseLoading, setAutoCloseLoading] = useState(false);
+  const [autoCloseMessage, setAutoCloseMessage] = useState("");
 
   useEffect(() => {
     loadUserAndMetrics();
   }, []);
+
+  useEffect(() => {
+    if (!loading && user && user.rol !== "supervisor") {
+      window.location.href = "/dashboard/tickets";
+    }
+  }, [loading, user]);
+
+  async function handleAutoClose() {
+    setAutoCloseLoading(true);
+    setAutoCloseMessage("");
+    
+    try {
+      const stored = localStorage.getItem("pb_auth");
+      if (!stored) {
+        setAutoCloseMessage("No hay sesión");
+        setAutoCloseLoading(false);
+        return;
+      }
+      
+      const authData = JSON.parse(stored);
+      const response = await fetch("/api/auto-close", {
+        method: "POST",
+        headers: {
+          Authorization: `pb_auth ${authData.token}`,
+        },
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        setAutoCloseMessage(result.message);
+      } else {
+        setAutoCloseMessage(result.error || "Error al ejecutar");
+      }
+    } catch (e) {
+      setAutoCloseMessage("Error de conexión");
+    } finally {
+      setAutoCloseLoading(false);
+    }
+  }
 
   async function loadUserAndMetrics() {
     setLoading(true);
@@ -98,8 +140,22 @@ export default function SupervisorDashboard() {
             <option value={10}>10 días</option>
             <option value={14}>14 días</option>
           </select>
+          <button
+            onClick={handleAutoClose}
+            disabled={autoCloseLoading}
+            className="px-4 py-2 rounded-lg border text-sm transition-all duration-300 hover:opacity-80 disabled:opacity-50"
+            style={{ backgroundColor: 'var(--gold)', borderColor: 'var(--beige-dark)', fontFamily: 'var(--font-cormorant)' }}
+          >
+            {autoCloseLoading ? "Cerrando..." : "Cerrar resueltos (48h+)"}
+          </button>
         </div>
       </div>
+      
+      {autoCloseMessage && (
+        <div className="text-sm py-2 px-4 rounded-lg" style={{ backgroundColor: autoCloseMessage.includes("cerraron") ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: autoCloseMessage.includes("cerraron") ? '#16a34a' : '#dc2626' }}>
+          {autoCloseMessage}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="rounded-2xl p-6 border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--beige-dark)', boxShadow: '0 4px 20px rgba(62, 39, 35, 0.08)' }}>
@@ -125,19 +181,19 @@ export default function SupervisorDashboard() {
           <h3 className="text-lg font-medium mb-1 text-center" style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--wood-dark)' }}>
             Tickets Vencidos
           </h3>
-          <OverdueTickets thresholdDays={thresholdDays} />
+          <OverdueTickets thresholdDays={thresholdDays} userRole={user?.rol} />
         </div>
       </div>
 
       <div className="rounded-2xl p-6 border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--beige-dark)', boxShadow: '0 4px 20px rgba(62, 39, 35, 0.08)' }}>
-        <DashboardCharts />
+        <DashboardCharts userRole={user?.rol} />
       </div>
 
       <div className="rounded-2xl p-6 border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--beige-dark)', boxShadow: '0 4px 20px rgba(62, 39, 35, 0.08)' }}>
         <h3 className="text-xl font-medium mb-6 text-center" style={{ fontFamily: 'var(--font-cormorant)', color: 'var(--wood-dark)' }}>
           Carga de Trabajo por Agente
         </h3>
-        <AgentWorkload />
+        <AgentWorkload userRole={user?.rol} />
       </div>
     </div>
   );
